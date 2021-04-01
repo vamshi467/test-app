@@ -67,3 +67,17 @@ td {
   width: 30em;
 }
 
+.merlin-grid.loading table {
+  opacity: 0.5;
+}
+
+.merlin-grid table.table {
+  margin-bottom: 0;
+  border-color: #fff;
+}
+
+.merlin-grid {
+  position: relative;
+  min-height: 40px;
+}
+
