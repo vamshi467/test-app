@@ -7,55 +7,87 @@ import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import {FetchProfileData,UpdateProfileData} from '../services/ProfileServiceFactory';
+import {DeleteProfileData, FetchProfileData,UpdateProfileData} from '../services/ProfileServiceFactory';
+
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import { makeStyles } from '@material-ui/core/styles';
+import Paper from '@material-ui/core/Paper';
 
 const ProfileContext = React.createContext();
 
 const EpiProfile = (props) => {
     const {
-        profiles,        
+        profiles, 
+        funcUpdate       
     } = props
+
  const [open,setOpen] = useState(false);
  const [selectedProfile,setSelectedProfile] = useState(false);
+ const [firstName,setFirstName] = useState(selectedProfile.firstName);
+ const [lastName,setLastName] = useState(selectedProfile.lastName);
+ const [gender,setGender] = useState(selectedProfile.gender);
+ const [idProfile,setIdProfile] = useState(selectedProfile.idProfile);
+
  const handleEditClick = (data) => {
       setOpen(true);
       setSelectedProfile(data);
+      setFirstName(data.nmFirst);
+      setLastName(data.nmLast);
+      setGender(data.gender);
+      setIdProfile(data.idProfile);
      }
 
      const handleDeleteClick = (id) => {
-         alert('Clicked Delete link');
+         const deleteProfile = DeleteProfileData();
+         deleteProfile(id)
+         .then(res =>
+          {
+            alert('Deleted record successfully');
+            funcUpdate()
+          }).catch(console.error())
      }
+
+     const useStyles = makeStyles({
+      table: {
+        minWidth: 200,
+        maxWidth: 300
+      },
+    });
 
      const handleClose = () => {
             setOpen(false);
+            console.log('Length of Profile :' + profiles.length);
             const GetProfiles = FetchProfileData();
             GetProfiles()
             .then(res => 
               {
-                const result = res;
-               // setProfiles(result);
+                funcUpdate()
               })
               .catch(console.error());
       };
 
-      const handleSaveProfile = (selectedProfile) => 
+      const handleSaveProfile = () => 
       {
-        console.log('Selected Date :' + JSON.stringify(selectedProfile));
-      //  e.preventDefault();
         const params = 
         {
-          firstName: selectedProfile.nmFirst,
-          lastName: selectedProfile.nmLast,
-          gender: selectedProfile.cdGender,
-          ID: selectedProfile.idProfile
+          firstName: firstName,
+          lastName: lastName,
+          gender: gender,
+          ID: idProfile
         };
         const UpdateProfile = UpdateProfileData();
         UpdateProfile(params)
         .then(res =>
          {
            const result = res;
+           alert('Profile updated successfully');
            console.log('Updated Result :' + result);
          }).catch(console.error());
       }
@@ -66,55 +98,60 @@ const EpiProfile = (props) => {
         key,
         idProfile,nmLast,nmFirst,cdGender} = data;
          return (
-         <tr key = {idProfile}>
-            <td>{idProfile}</td>
-            <td>{nmLast}</td>
-            <td>{nmFirst}</td>
-            <td>{cdGender}</td>
-            <td>      
+         <TableRow key = {idProfile}>
+            <TableCell align="center">{idProfile}</TableCell>
+            <TableCell align="center">{nmLast}</TableCell>
+            <TableCell align="center">{nmFirst}</TableCell>
+            <TableCell align="center">{cdGender}</TableCell>
+            <TableCell align="center">      
                 <Link href="#" key = {key} variant="body2" 
                  onClick = {() => handleEditClick(data)} 
                 >Edit
                 </Link>
-            </td> 
-            <td>      
+            </TableCell> 
+            <TableCell align="center">      
                 <Link href="#" variant="body2" onClick= {()=> handleDeleteClick(idProfile)}>
                         Delete
                 </Link>
-            </td>
-      </tr>
+            </TableCell>
+      </TableRow>
       );
      };
 
      const renderHeader = () => {
-        let headerElement = ['ID', 'LastName', 'FirstName', 'Gender']
+        let headerElement = ['ID', 'LastName', 'FirstName', 'Gender','Edit Action','Delete Action']
 
         return headerElement.map((key, index) => {
-            return <th key={index}>{key.toUpperCase()}</th>
+            return <TableCell key={index} align="center">{key.toUpperCase()}</TableCell>
         })
     }
+    const styles = {
+      visibility: profiles.length > 0 ? 'visible' : 'hidden'
+    }
+    const classes = useStyles();
 
 return (
- <div className="merlin-grid">
-      <div class=" table-responsive shadowed">
+ <div style = {styles}>
+      <div>
     <ProfileContext.Provider value = {profiles}>
-      <table class="table table-bordered table-bordered-inside-only table-striped table-condensed table-hover">
-              <thead>
-                  <tr>
+      <TableContainer  component={Paper} >
+      <Table className={classes.table} aria-label="simple table" align="center">
+              <TableHead>
+                  <TableRow>
                       {renderHeader()}
-                  </tr>
-              </thead>
-                    <tbody>
-        {profiles && profiles.map((data, key) => {
-            console.log('Data : '+data);
-          return (
-                  renderRow(data) 
-                 );
-          })}
-        </tbody>
-    </table>
+                  </TableRow>
+              </TableHead>
+              <TableBody>
+                      {profiles && profiles.map((data, key) => {
+                        return (
+                                renderRow(data) 
+                              );
+                        })}
+               </TableBody>
+    </Table>
+    </TableContainer>
     </ProfileContext.Provider>
-    <form onSubmit = {submitProfileData}>
+    <form>
             <Dialog open = {open} onClose={handleClose} aria-labelledby="form-dialog-title">
               <DialogTitle id="form-dialog-title">Edit Profile</DialogTitle>
               <DialogContent>
@@ -123,26 +160,26 @@ return (
                   occasionally.
                 </DialogContentText> */}
           <TextField name="firstName" key="firstName" defaultValue={selectedProfile.nmFirst}
-               //onChange={(e) => { setFirstName(e.target.value)} } 
-              id="outlined-basic" label="First Name" variant="outlined"  />
+               onChange={(e) => { setFirstName(e.target.value)} } 
+              id="firstName" label="First Name" variant="outlined"  />
           <br/>
           <br></br>
           <TextField name="lastName" key="lastName" defaultValue = {selectedProfile.nmLast}
-              //onChange={(e) => { setLastName(e.target.value) }} 
-              id="outlined-basic" label="Last Name" variant="outlined"  />
+              onChange={(e) => { setLastName(e.target.value) }} 
+              id="lastName" label="Last Name" variant="outlined"  />
           <br></br>
           <br></br>
           <TextField name="gender" key="gender" defaultValue = {selectedProfile.cdGender}
-               // onChange={(e) => { setGender(e.target.value) }} 
-                id="outlined-basic" label="Gender" variant="outlined"  />
+                onChange={(e) => { setGender(e.target.value) }} 
+                id="gender" label="Gender" variant="outlined"  />
                 <br></br>
                 <br></br>
           </DialogContent>
               <DialogActions>
-              <Button onClick={() => handleSaveProfile(selectedProfile)} color="primary">
+              <Button onClick={() => handleSaveProfile()} color="primary">
                   Save
                 </Button>
-                <Button onClick={handleClose} color="primary">
+                <Button onClick={() => handleClose()} color="primary">
                   Cancel
                 </Button>
               </DialogActions>

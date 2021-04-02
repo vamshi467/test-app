@@ -31,8 +31,26 @@ const UpdateProfileData = () => async(params) =>
   }
 
 }
+
+const DeleteProfileData = () => async(ID) =>
+{
+  try 
+  {
+    console.log('Params ID' + ID);
+    const result = await axios.delete(`https://localhost:44333/api/profiles/${ID}`);
+    return result.data;
+  }
+  catch(error)
+  {
+    console.log(error);
+    throw error.data && error.response.data;
+  }
+
+}
+
 export{ FetchProfileData,
-        UpdateProfileData}
+        UpdateProfileData,
+        DeleteProfileData}
 
 
 

@@ -12,7 +12,7 @@ const Person = (props) => {
         person,
     } = props
     return (
-        <div class="merlin-grid">
+        <div>
         {person && person.map((data, key) => {
           return (
             <div key={key}>

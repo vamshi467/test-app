@@ -6,7 +6,6 @@ import { makeStyles, withStyles } from '@material-ui/core/styles';
 // Local Imports
 import logo from './logo.svg';
 import './App.css';
-import FetchProductData from './services/ProductsServiceFactory';
 import FetchUsereData from '../src/services/UsersServiceFactory';
 import {FetchProfileData,UpdateProfileData} from '../src/services/ProfileServiceFactory';
 import EpiProfile from './components/EpiProfile'
@@ -44,27 +43,6 @@ export default function App() {
   const [profiles, setProfiles] = useState([]);
 
 
-  const submit = (e) => {
-    // let user = {
-    //   "name1" : name1,
-    //   "name2" : name2
-    // } 
-    e.preventDefault();
-    let host = 'http://localhost';
-    let port = '44333';
-    const headers = {
-        'Content-Type': 'application/json'
-    };
-  // fetchData();
-  const GetProducts = FetchProductData();
-    GetProducts().then(data =>
-      {
-        setProducts(data);
-        console.log(JSON.stringify(data));
-      }
-      )
-      .catch(console.error());
-  }
 
   const handleEditing = (e) => {
     e.preventDefault();
@@ -85,8 +63,7 @@ export default function App() {
       .catch(console.error());
   }
 
-  const handleProfile = (e) => {
-    e.preventDefault();
+  const handleProfile = () => {
     //fetchProfileData();
     const GetProfiles = FetchProfileData();
     GetProfiles()
@@ -98,6 +75,7 @@ export default function App() {
       })
       .catch(console.error());
   }
+
 
   const handleUpdateProfile = (e) => 
   {
@@ -118,87 +96,15 @@ export default function App() {
       const result = res;
       console.log('Updated Result :' + result);
       const GetProfiles = FetchProfileData();
-    GetProfiles()
-    .then(res => 
-      {
-        const result = res;
-        setProfiles(result);
-      })
-      .catch(console.error());
-    })
+        GetProfiles()
+        .then(res => 
+          {
+            const result = res;
+            setProfiles(result);
+          })
+          .catch(console.error());
+        })
   }
-
-  // function fetchData() {
-  //   try {
-  //     axios.get(`https://jsonplaceholder.typicode.com/users`)
-  //     .then(res => {
-  //       const persons = res.data;
-  //       setPerson(persons);
-  //       console.log('Test persons : ' + JSON.stringify(persons));
-  //     })
-  //   }    
-  //   catch(error)
-  //   {
-  //      console.log(error);
-  //   }
-  // }
-
-  // function fetchProductsData() 
-  // {
-  //    try 
-  //    {
-  //       axios.get('https://localhost:44333/api/products')
-  //       .then(res => 
-  //         {
-  //           const products = res.data;
-  //           setProducts(products);
-  //           console.log('Products' + JSON.stringify(products));
-  //         } )
-  //    }
-  //    catch(error)
-  //    {
-  //      console.log(error);
-  //    }
-  // }
-
-  // function fetchProfileData()
-  // {
-  //   try 
-  //   {
-  //     axios.get('https://localhost:44333/api/profiles')
-  //     .then( res => 
-  //       {
-  //         const profiles = res.data;
-  //         setProfiles(profiles);
-  //         console.log('Profiles : ' + JSON.stringify(profiles));
-  //       }
-  //     )
-  //   }
-  //   catch(error) 
-  //   {
-  //     console.log(error);
-  //   }
-  // }
-
-  // const Person = ({ name , username, email}) => {
-  //   return (
-  //     <table>
-  //       <tbody>
-  //         <tr>
-  //           <td>
-  //             <h5>{name}</h5>
-  //           </td>
-  //           <td>
-  //             <h5>{username}</h5>
-  //           </td>
-  //           <td>
-  //             <h4>{email}</h4>
-  //           </td>
-  //         </tr>
-  //       </tbody>
-  //     </table>
-  //   );
-  // };
 
   return (
     
@@ -206,35 +112,16 @@ export default function App() {
       <HomePageHeader/>
       {/* <header className="App-header"> */}
         {/* <img src={logo} className="App-logo" alt="logo" /> */}
-        <form className={classes.root} noValidate autoComplete="off" onSubmit={submit} >
-          {/* <label>First Name</label>
-          <TextField name="firstName" key="firstName" onChange={(e) => { setFirstName(e.target.value)} } id="standard-basic" label="First Name" variant="filled" className={classes.margin} />
-          <br/>
-          <label>Last Name</label>
-          <TextField name="lastName" key="lastName" onChange={(e) => { setLastName(e.target.value) }} id="filled-basic" label="Last Name" variant="filled" className={classes.margin} />
-          <br></br>
-          <label>Gender</label>
-          <TextField name="gender" key="gender" onChange={(e) => { setGender(e.target.value) }} id="filled-basic" label="Gender" variant="filled" className={classes.margin} />
-          <br></br> */}
-          {/* <ColorButton
-            type="submit"
-            variant="contained"
-            color="primary"
-            className={classes.margin}
-            size="large"
-          >Get Users
-          </ColorButton> */}
-        </form>
       {/* </header> */}
       {/* <ColorButton onClick={handleEditing} type="submit">
           Get Products
       </ColorButton> <span></span> */}
       <ColorButton onClick={handleProfile} type="submit">
           Get Profiles
-      </ColorButton> <span></span>
-      <ColorButton onClick={handleUpdateProfile} type="submit">
+      </ColorButton> <span width="20"></span>
+      {/* <ColorButton onClick={handleUpdateProfile} type="submit">
           Update Profiles
-      </ColorButton>
+      </ColorButton> */}
       {/* <div className="stock-container">
         {person && person.map((data, key) => {
           return (
@@ -251,7 +138,7 @@ export default function App() {
       </div> */}
       <Product products = {products} />
       <Person person = {person} />
-      <EpiProfile profiles={profiles} />
+      <EpiProfile profiles={profiles} funcUpdate = {handleProfile}/>
     </div>
   );
 };
