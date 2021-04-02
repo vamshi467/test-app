@@ -89,7 +89,8 @@ const EpiProfile = (props) => {
         .then(res =>
          {
            const result = res;
-           alert('Profile updated successfully');
+            alert('Profile updated successfully');
+            console.log('Result :'+result);
          }).catch(console.error());
       }
     

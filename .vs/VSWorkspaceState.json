@@ -1,8 +1,12 @@
 {
   "ExpandedNodes": [
     "",
-    "\\src"
+    "\\src",
+    "\\src\\components",
+    "\\src\\constants",
+    "\\src\\hooks",
+    "\\src\\reducers"
   ],
-  "SelectedNode": "\\src\\services",
+  "SelectedNode": "\\src\\components\\ColorButton.js",
   "PreviewInSolutionExplorer": false
 }
