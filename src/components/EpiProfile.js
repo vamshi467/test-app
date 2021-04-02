@@ -40,8 +40,10 @@ const EpiProfile = (props) => {
       setSelectedProfile(data);
       setFirstName(data.nmFirst);
       setLastName(data.nmLast);
-      setGender(data.gender);
+      setGender(data.cdGender);
       setIdProfile(data.idProfile);
+      console.log('FirstName :' + data.nmFirst);
+      console.log('Gender :' + data.gender);
      }
 
      const handleDeleteClick = (id) => {
@@ -88,7 +90,6 @@ const EpiProfile = (props) => {
          {
            const result = res;
            alert('Profile updated successfully');
-           console.log('Updated Result :' + result);
          }).catch(console.error());
       }
     
@@ -98,7 +99,7 @@ const EpiProfile = (props) => {
         key,
         idProfile,nmLast,nmFirst,cdGender} = data;
          return (
-         <TableRow key = {idProfile}>
+         <TableRow key = {key}>
             <TableCell align="center">{idProfile}</TableCell>
             <TableCell align="center">{nmLast}</TableCell>
             <TableCell align="center">{nmFirst}</TableCell>
@@ -142,7 +143,7 @@ return (
                   </TableRow>
               </TableHead>
               <TableBody>
-                      {profiles && profiles.map((data, key) => {
+                      {profiles && profiles.map((data) => {
                         return (
                                 renderRow(data) 
                               );
@@ -155,10 +156,6 @@ return (
             <Dialog open = {open} onClose={handleClose} aria-labelledby="form-dialog-title">
               <DialogTitle id="form-dialog-title">Edit Profile</DialogTitle>
               <DialogContent>
-                {/* <DialogContentText>
-                  To subscribe to this website, please enter your email address here. We will send updates
-                  occasionally.
-                </DialogContentText> */}
           <TextField name="firstName" key="firstName" defaultValue={selectedProfile.nmFirst}
                onChange={(e) => { setFirstName(e.target.value)} } 
               id="firstName" label="First Name" variant="outlined"  />
